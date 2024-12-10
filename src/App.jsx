@@ -1,13 +1,35 @@
 import React from 'react'
+import { createBrowserRouter, RouterProvider } from 'react-router-dom'
+import Login from './pages/Login/Login'
+import Chat from './pages/Chat/Chat'
+import ProfileUpdate from './pages/ProfileUpdate/ProfileUpdate'
+
 
 const App = () => {
+
+  const router= createBrowserRouter([
+    {
+      path: '/',
+      element: <Login/>,
+    },
+
+    {
+      path: '/chat',
+      element: <Chat/>,
+    },
+
+    {
+      path: '/profile',
+      element: <ProfileUpdate/>
+    }
+
+
+  ]);
   return (
-    <div>
-      <h1 className="text-8xl font-bold underline bg-red-500">
-            Hello world!
-            </h1>
-      
-    </div>
+   <>
+   <RouterProvider router={router} />
+
+   </>
   )
 }
 
