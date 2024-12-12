@@ -4,7 +4,7 @@ import assets from '../../assets/assets'
 const LeftSidebar = () => {
     return (
         // left sidebar
-        <div className='bg-[#001030] text-white h-[70vh] ' >
+        <div className='bg-[#001030] text-white h-[75vh] ' >
 
             {/* left sidebar top */}
             <div className='p-[20px]'>

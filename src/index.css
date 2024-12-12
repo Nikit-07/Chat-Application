@@ -13,10 +13,15 @@
     font-family: Poppins;
 }
 
-.input-style{
-    @apply py-[8px] px-[10px] border border-[#c9c9c9] rounded-[4px]  outline-[#077eff];
-}
-
 ::-webkit-scrollbar{
     display:none;
 }
+
+@layer utilities {
+
+    /* Utility for input styles */
+    .input-style{
+        @apply py-[8px] px-[10px] border border-[#c9c9c9] rounded-[4px]  outline-[#077eff];
+    }
+}
+
