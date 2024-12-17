@@ -12,9 +12,19 @@ const LeftSidebar = () => {
                 {/* navigation */}
                 <div className='flex items-center justify-between' >
                     <img src={assets.logo} alt="chat-logo" className='max-w-[140px]' />
-                    {/* icon */}
-                    <div>
+
+                    {/* Menu-icon */}
+                    <div className=' relative py-[10px] px-0 group ' >
                         <img src={assets.menu_icon} alt="menu-icon" className=" max-h-[20px] cursor-pointer opacity-60 " />
+
+                        {/* Sub-Menu */}
+                        <div className=' absolute top-[100%] right-0 w-[130px] p-[20px] rounded-[5px] bg-white text-black
+                        [&>p]:cursor-pointer [&>p]:text-[14px] hidden group-hover:block ' >
+
+                            <p>Edit Profile</p>
+                            <hr className=' border-none h-px bg-[#a4a4a4] my-2 mx-0 ' />
+                            <p>Logout</p>
+                        </div>
                     </div>
                 </div>
 
