@@ -1,5 +1,6 @@
 import React from 'react'
 import assets from '../../assets/assets'
+import { logout } from '../../config/firebase'
 
 const RightSidebar = () => {
   return (
@@ -30,7 +31,7 @@ const RightSidebar = () => {
         <img src={assets.pic2} alt="" />
       </div>
       </div>
-      <button className='absolute bottom-5 left-[50%] -translate-x-1/2 bg-[#077eff] text-white border-none text-[12px] font-light
+      <button onClick={()=> logout()} className='absolute bottom-5 left-[50%] -translate-x-1/2 bg-[#077eff] text-white border-none text-[12px] font-light
       py-[10px] px-[65px] rounded-[20px] cursor-pointer ' >Logout</button>
 
     </div>
