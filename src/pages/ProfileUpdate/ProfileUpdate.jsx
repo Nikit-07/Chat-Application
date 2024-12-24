@@ -1,8 +1,82 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import assets from '../../assets/assets'
+import { onAuthStateChanged } from 'firebase/auth';
+import { auth, db } from '../../config/firebase';
+import { doc, getDoc, updateDoc } from 'firebase/firestore';
+import { useNavigate } from 'react-router-dom';
+import { toast } from 'react-toastify';
+import upload from '../../lib/upload';
 
 const ProfileUpdate = () => {
+  const navigate=useNavigate();
   const[image, setImage]=useState(null);
+
+  const [name, setname]=useState('');
+  const [bio, setBio]= useState('');
+  const[uid, setUid]= useState('');
+  const[prevImg, setPrevImg]= useState('');
+
+  const updateProfile= async (event)=>{
+    event.preventDefault();
+
+    try {
+      if(!image && !prevImg){
+        toast.error("Upload profile image");
+      }
+
+      const docRef= doc(db, "users", uid);
+      if(image){
+        const imageURL= await upload(image);
+        setPrevImg(imageURL);
+
+        await updateDoc(docRef, {
+          avatar: imageURL,
+          bio:bio,
+          name:name
+        });
+
+      } else{
+        await updateDoc(docRef, {
+          bio:bio,
+          name:name
+        });
+
+      }
+      
+    } catch (error) {
+      
+    }
+
+  }
+
+
+
+  useEffect(()=>{
+    onAuthStateChanged(auth, async (user)=>{
+      if(user){
+        setUid(user.uid);
+        const docRef= doc(db, "users", user.uid);
+        const docSnap= await getDoc(docRef);
+
+        if(docSnap.data().name){
+          setname(docSnap.data().name);
+        }
+        if(docSnap.data().bio){
+          setBio(docSnap.data().bio);
+        }
+        if(docSnap.data().avatar){
+          setPrevImg(docSnap.data().avatar);
+        }
+  
+      }
+      else{
+        navigate('/');
+      }
+    })
+
+  },[])
+
+
   return (
     // profile
     <div className=' min-h-[100vh] bg-[url("/background.png")] bg-cover bg-no-repeat flex items-center justify-center' >
@@ -10,7 +84,7 @@ const ProfileUpdate = () => {
       {/* profile-container */}
       <div className='bg-white flex items-center justify-between min-w-[700px] rounded-[10px] '>
 
-        <form className='flex flex-col gap-5 p-10 ' >
+        <form onSubmit={updateProfile} className='flex flex-col gap-5 p-10 ' >
 
           <h3 className='font-medium' > Profile Details</h3>
 
@@ -22,8 +96,8 @@ const ProfileUpdate = () => {
             upload profile image
           </label>
 
-          <input type="text" placeholder='Your name' required className=' p-[10px] min-w-[300px] border border-[#c9c9c9] outline-[#077eff] ' />
-          <textarea placeholder='Write profile bio...' required className=' p-[10px] min-w-[300px] border border-[#c9c9c9] outline-[#077eff]'></textarea>
+          <input type="text" onChange={(e)=> setname(e.target.value)}  value={name} placeholder='Your name' required className=' p-[10px] min-w-[300px] border border-[#c9c9c9] outline-[#077eff] ' />
+          <textarea  onChange={(e)=> setBio(e.target.value)} value={bio} placeholder='Write profile bio...' required className=' p-[10px] min-w-[300px] border border-[#c9c9c9] outline-[#077eff]'></textarea>
           <button type='submit' className='border-none text-white bg-[#077eff] p-2 text-[16px] cursor-pointer ' >Save</button>
 
         </form>
