@@ -1,7 +1,9 @@
 import React from 'react'
 import assets from '../../assets/assets'
+import { useNavigate } from 'react-router-dom'
 
 const LeftSidebar = () => {
+    const navigate= useNavigate();
     return (
         // left sidebar
         <div className='bg-[#001030] text-white h-[75vh] ' >
@@ -21,9 +23,9 @@ const LeftSidebar = () => {
                         <div className=' absolute top-[100%] right-0 w-[130px] p-[20px] rounded-[5px] bg-white text-black
                         [&>p]:cursor-pointer [&>p]:text-[14px] hidden group-hover:block ' >
 
-                            <p>Edit Profile</p>
+                            <p onClick={()=> navigate('/profile')} >Edit Profile</p>
                             <hr className=' border-none h-px bg-[#a4a4a4] my-2 mx-0 ' />
-                            <p>Logout</p>
+                            <p  >Logout</p>
                         </div>
                     </div>
                 </div>

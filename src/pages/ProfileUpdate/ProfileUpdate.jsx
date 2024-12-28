@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useContext, useEffect, useState } from 'react'
 import assets from '../../assets/assets'
 import { onAuthStateChanged } from 'firebase/auth';
 import { auth, db } from '../../config/firebase';
@@ -6,6 +6,7 @@ import { doc, getDoc, updateDoc } from 'firebase/firestore';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import upload from '../../lib/upload';
+import { AppContext } from '../../context/AppContext';
 
 const ProfileUpdate = () => {
   const navigate=useNavigate();
@@ -15,6 +16,8 @@ const ProfileUpdate = () => {
   const [bio, setBio]= useState('');
   const[uid, setUid]= useState('');
   const[prevImg, setPrevImg]= useState('');
+
+  const {setUserData}= useContext(AppContext);
 
   const updateProfile= async (event)=>{
     event.preventDefault();
@@ -42,9 +45,15 @@ const ProfileUpdate = () => {
         });
 
       }
+
+      const snap= await getDoc(docRef);
+      setUserData(snap.data());
+      navigate('/chat');
+
       
     } catch (error) {
-      
+      console.error(error);
+      toast.error(error.message);
     }
 
   }
@@ -101,7 +110,7 @@ const ProfileUpdate = () => {
           <button type='submit' className='border-none text-white bg-[#077eff] p-2 text-[16px] cursor-pointer ' >Save</button>
 
         </form>
-        <img src={image ? URL.createObjectURL(image) : assets.logo_icon} alt="" className=' max-w-[160px] aspect-square my-5 mx-auto rounded-[50%] ' />
+        <img src={image ? URL.createObjectURL(image) : prevImg? prevImg :  assets.logo_icon} alt="" className=' max-w-[160px] aspect-square my-5 mx-auto rounded-[50%] ' />
       </div>
       
     </div>
