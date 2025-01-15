@@ -1,14 +1,15 @@
 import React, { useContext, useState } from 'react'
 import assets from '../../assets/assets'
 import { useNavigate } from 'react-router-dom'
-import { collection, getDoc, getDocs, query, where } from 'firebase/firestore';
+import { arrayUnion, collection, doc, getDoc, getDocs, query, serverTimestamp, setDoc, updateDoc, where } from 'firebase/firestore';
 import { db } from '../../config/firebase';
 import { AppContext } from '../../context/AppContext';
+import { toast } from 'react-toastify';
 
 const LeftSidebar = () => {
 
     const navigate = useNavigate();
-    const { userData } = useContext(AppContext);
+    const { userData, chatData } = useContext(AppContext);
     // console.log("Thsi is user logged in data", userData);
 
     const [user, setUser] = useState(null);
@@ -25,15 +26,29 @@ const LeftSidebar = () => {
                 const querySnap = await getDocs(q);
 
                 if (!querySnap.empty && querySnap.docs[0].data().id !== userData.id) {
-                    // console.log("First Doc Data:", querySnap.docs[0].data()); // Actual data of the first doc
-                    setUser(querySnap.docs[0].data());
+                    console.log("First Doc Data:", querySnap.docs[0].data()); // Actual data of the first doc
+
+
+                    let userAlreadyExist = false;   //set the already exist user to false
+
+                    chatData.map((user) => {  // importing the chat data from the app context
+                        if (user.rId === querySnap.docs[0].data().id) {  //check the searched user wheather it's present or not
+                            userAlreadyExist = true;   // if searched user already present set to true
+                        }
+                    })
+
+                    if (!userAlreadyExist) {   // if serached user is not already present it the chatData array then show it to the current user
+                        setUser(querySnap.docs[0].data());
+                    }
+
+                    // setUser(querySnap.docs[0].data());
                 }
                 else {
                     setUser(null);
                 }
 
             }
-            else{
+            else {
                 setShowSearch(false);
             }
 
@@ -42,7 +57,45 @@ const LeftSidebar = () => {
         }
     }
 
-    console.log("All users data", user);
+    const addChat = async () => {
+        const messageRef = collection(db, "messages");
+        const chatsRef = collection(db, "chats");
+        try {
+
+            const newMessageRef = doc(messageRef);
+
+            await setDoc(newMessageRef, {
+                createdAt: serverTimestamp(),
+                messages: []
+            });
+
+            await updateDoc(doc(chatsRef, user.id), {
+                chatData: arrayUnion({
+                    messageId: newMessageRef.id,
+                    lastMessage: " ",
+                    rId: userData.id,
+                    updatedAt: Date.now(),
+                    messageSeen: true,
+                })
+            });
+
+            await updateDoc(doc(chatsRef, userData.id), {
+                chatData: arrayUnion({
+                    messageId: newMessageRef.id,
+                    lastMessage: " ",
+                    rId: user.id,
+                    updatedAt: Date.now(),
+                    messageSeen: true,
+                })
+            });
+
+        } catch (error) {
+            toast.error(error.message);
+            console.error(error);
+
+        }
+
+    }
 
 
     return (
@@ -84,51 +137,36 @@ const LeftSidebar = () => {
 
                 {/* Multiple users */}
 
-                { showSearch && user ? 
-                    
-                        <div className='flex items-center gap-[10px] py-[10px] px-[20px] cursor-pointer text-[13px] hover:bg-[#077EFF] group'>
+                {showSearch && user ?
 
-                            <img src={user.avatar} alt="profile-img" className='w-[35px] rounded-[50%] aspect-square ' />
-                            <p> {user.name} </p>
-                              
-                        </div>
-                        : 
-                        Array(10).fill("").map((arr, index) => (
+                    <div onClick={addChat} className='flex items-center gap-[10px] py-[10px] px-[20px] cursor-pointer text-[13px] hover:bg-[#077EFF] group'>
+
+                        <img src={user.avatar} alt="profile-img" className='w-[35px] rounded-[50%] aspect-square ' />
+                        <p> {user.name} </p>
+
+                    </div> :
+
+                        chatData.map((item, index) => (
                             <div className='flex items-center gap-[10px] py-[10px] px-[20px] cursor-pointer text-[13px] hover:bg-[#077EFF] group' key={index}>
-    
-                                <img src={assets.profile_img} alt="profile-img" className='w-[35px] rounded-[50%] aspect-square ' />
-    
+
+                                <img src={item.userData.avatar} alt="profile-img" className='w-[35px] rounded-[50%] aspect-square ' />
+
                                 <div className='flex flex-col'>
-                                    <p>David</p>
-                                    <span className='text-[#9f9f9f] text-[11px] group-hover:text-white '>Hello, How are you.</span>
+                                    <p>{item.userData.name}</p>
+                                    <span className='text-[#9f9f9f] text-[11px] group-hover:text-white '>{item.lastMessage}</span>
                                 </div>
                             </div>
-                        ))
-                    
+                        )) 
+
+
                 }
-
-
-
-
-
-                {/* {
-                    Array(10).fill("").map((arr, index) => (
-                        <div className='flex items-center gap-[10px] py-[10px] px-[20px] cursor-pointer text-[13px] hover:bg-[#077EFF] group' key={index}>
-
-                            <img src={assets.profile_img} alt="profile-img" className='w-[35px] rounded-[50%] aspect-square ' />
-
-                            <div className='flex flex-col'>
-                                <p>David</p>
-                                <span className='text-[#9f9f9f] text-[11px] group-hover:text-white '>Hello, How are you.</span>
-                            </div>
-                        </div>
-                    ))
-                } */}
-
             </div>
         </div>
 
     )
 }
+
+
+
 
 export default LeftSidebar

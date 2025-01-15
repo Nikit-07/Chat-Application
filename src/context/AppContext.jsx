@@ -10,7 +10,7 @@ const AppContextProvider = ({ children }) => {
     const navigate= useNavigate();
 
     const [userData, setUserData] = useState(null);
-    const [chatData, setChatData] = useState(null);
+    const [chatData, setChatData] = useState([]);
 
     const loadUserData = async (uid) => {
         try {
@@ -53,7 +53,7 @@ const AppContextProvider = ({ children }) => {
                 const chatItems = res.data().chatData;
                 const tempData=[];
 
-                for (item of chatItems){
+                for (const item of chatItems){
                     const userRef= doc(db, 'users', item.rId);
                     const userSnap = await getDoc(userRef);
                     const userData= userSnap.data();
