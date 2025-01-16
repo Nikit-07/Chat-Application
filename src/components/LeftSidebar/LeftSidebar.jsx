@@ -10,7 +10,8 @@ const LeftSidebar = () => {
 
     const navigate = useNavigate();
     const { userData, chatData } = useContext(AppContext);
-    // console.log("Thsi is user logged in data", userData);
+    console.log("Thsi is user logged in data", userData);
+    console.log("Thsi is chat logged in data", chatData);
 
     const [user, setUser] = useState(null);
     const [showSearch, setShowSearch] = useState(false);
@@ -97,6 +98,10 @@ const LeftSidebar = () => {
 
     }
 
+    const setChat = async (item)=> {
+        console.log(item);
+    }
+
 
     return (
         // left sidebar
@@ -147,7 +152,7 @@ const LeftSidebar = () => {
                     </div> :
 
                         chatData.map((item, index) => (
-                            <div className='flex items-center gap-[10px] py-[10px] px-[20px] cursor-pointer text-[13px] hover:bg-[#077EFF] group' key={index}>
+                            <div onClick={ ()=> setChat(item)} className='flex items-center gap-[10px] py-[10px] px-[20px] cursor-pointer text-[13px] hover:bg-[#077EFF] group' key={index}>
 
                                 <img src={item.userData.avatar} alt="profile-img" className='w-[35px] rounded-[50%] aspect-square ' />
 

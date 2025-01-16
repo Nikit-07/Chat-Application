@@ -10,7 +10,7 @@ const AppContextProvider = ({ children }) => {
     const navigate= useNavigate();
 
     const [userData, setUserData] = useState(null);
-    const [chatData, setChatData] = useState([]);
+    const [chatData, setChatData] = useState(null);
 
     const loadUserData = async (uid) => {
         try {
