@@ -9,9 +9,9 @@ import { toast } from 'react-toastify';
 const LeftSidebar = () => {
 
     const navigate = useNavigate();
-    const { userData, chatData } = useContext(AppContext);
-    console.log("Thsi is user logged in data", userData);
-    console.log("Thsi is chat logged in data", chatData);
+    const { userData, chatData, messagesId, setMessagesId, chatUser, setChatUser } = useContext(AppContext);
+    // console.log("Thsi is user logged in data", userData);
+    // console.log("Thsi is chat logged in data", chatData);
 
     const [user, setUser] = useState(null);
     const [showSearch, setShowSearch] = useState(false);
@@ -99,7 +99,15 @@ const LeftSidebar = () => {
     }
 
     const setChat = async (item)=> {
-        console.log(item);
+        // saving the selected user data and messagesId from the search-bar  In the state
+        // console.log(item);
+        
+
+        setMessagesId(item.messageId);
+        setChatUser(item);
+
+        // console.log(chatUser);
+        // console.log(messagesId);
     }
 
 
