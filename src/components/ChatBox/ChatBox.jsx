@@ -25,21 +25,21 @@ const ChatBox = () => {
         })
 
 
-        const userIDs=[userData.id, chatUser.rId];
+        const userIDs = [userData.id, chatUser.rId];
 
-        userIDs.forEach( async (id)=>{
-          const userChatsRef= doc(db, 'chats', id);
-          const userChatsSnapshot=await getDoc(userChatsRef);
+        userIDs.forEach(async (id) => {
+          const userChatsRef = doc(db, 'chats', id);
+          const userChatsSnapshot = await getDoc(userChatsRef);
 
-          if(userChatsSnapshot.exists()){
-            const userChatData= userChatsSnapshot.data();
-            const chatIndex= userChatData.chatData.findIndex( (index)=> index.messageId === messagesId );
+          if (userChatsSnapshot.exists()) {
+            const userChatData = userChatsSnapshot.data();
+            const chatIndex = userChatData.chatData.findIndex((index) => index.messageId === messagesId);
 
-            userChatData.chatData[chatIndex].lastMessage= input;
-            userChatData.chatData[chatIndex].updatedAt= Date.now();
+            userChatData.chatData[chatIndex].lastMessage = input;
+            userChatData.chatData[chatIndex].updatedAt = Date.now();
 
-            if(userChatData.chatData[chatIndex].rId ===  userData.id){
-              userChatData.chatData[chatIndex].messageSeen=false;
+            if (userChatData.chatData[chatIndex].rId === userData.id) {
+              userChatData.chatData[chatIndex].messageSeen = false;
             }
 
             await updateDoc(userChatsRef, {
@@ -48,15 +48,14 @@ const ChatBox = () => {
 
           }
 
-        } )
+        })
 
       }
     } catch (error) {
       console.log(error);
       toast.error(error.message);
     }
-
-    // it clears the input field after sending the message 
+    // it clears the input field after sending the message
     setInput("");
 
 
@@ -100,10 +99,29 @@ const ChatBox = () => {
 
       {/* Middle-section chat-message */}
 
+
       <div className=' h-[calc(100%-70px)] pb-[50px] flex flex-col-reverse  overflow-y-scroll'>
 
+        {messages.map((msg, index) => (
+        // each-messaage 
+
+          <div key={index} className={msg.sId === userData.id ? 'flex items-end justify-end gap-[5px] py-0 px-[15px]' : 'flex flex-row-reverse items-end justify-end  gap-[5px] py-0 px-[15px]'} >
+
+            <p className='text-white bg-[#077EFF] p-2 max-w-[200px] text-[11px] font-light rounded-tl-[8px] rounded-tr-[8px] rounded-br-[0px] rounded-bl-[8px] mb-2 '> {msg.text} </p>
+
+
+            <div className='text-center text-[9px] ' >
+              <img src={msg.sId === userData.id ? userData.avatar : chatUser.userData.avatar} alt="user-img" className='w-[27px] aspect-square rounded-[50px]  ' />
+              <p>2:30 PM</p>
+            </div>
+          </div>
+        ) )}
+
+        
+
         {/* senders-messaage */}
-        <div className='flex items-end justify-end gap-[5px] py-0 px-[15px]' >
+
+        {/* <div className='flex items-end justify-end gap-[5px] py-0 px-[15px]' >
 
           <p className='text-white bg-[#077EFF] p-2 max-w-[200px] text-[11px] font-light rounded-tl-[8px] rounded-tr-[8px] rounded-br-[0px] rounded-bl-[8px] mb-2 '> sender Lorem ipsum dolor sit amet..</p>
 
@@ -111,26 +129,30 @@ const ChatBox = () => {
             <img src={assets.profile_img} alt="user-img" className='w-[27px] aspect-square rounded-[50px]  ' />
             <p>2:30 PM</p>
           </div>
-        </div>
+        </div> */}
+
+
 
         {/* senders image */}
-        <div className='flex items-end justify-end gap-[5px] py-0 px-[15px]' >
 
-          {/* <p className='text-white bg-[#077EFF] p-2 max-w-[200px] text-[11px] font-light rounded-tl-[8px] rounded-tr-[8px] rounded-br-[0px] rounded-bl-[8px] mb-2 '> sender Lorem ipsum dolor sit amet..</p> */}
+        {/* <div className='flex items-end justify-end gap-[5px] py-0 px-[15px]' > */}
 
-          <img src={assets.pic1} alt="img" className='max-w-[230px] mb-[30px] rounded-[10px] ' />
+        {/* <p className='text-white bg-[#077EFF] p-2 max-w-[200px] text-[11px] font-light rounded-tl-[8px] rounded-tr-[8px] rounded-br-[0px] rounded-bl-[8px] mb-2 '> sender Lorem ipsum dolor sit amet..</p> */}
+
+        {/* <img src={assets.pic1} alt="img" className='max-w-[230px] mb-[30px] rounded-[10px] ' />
 
           <div className='text-center text-[9px] ' >
             <img src={assets.profile_img} alt="user-img" className='w-[27px] aspect-square rounded-[50px]  ' />
             <p>2:30 PM</p>
           </div>
-        </div>
+        </div> */}
 
 
 
 
         {/* Receivers-message */}
-        <div className='flex flex-row-reverse items-end justify-end  gap-[5px] py-0 px-[15px]'>
+
+        {/* <div className='flex flex-row-reverse items-end justify-end  gap-[5px] py-0 px-[15px]'>
 
           <p className='text-white bg-[#077EFF] p-2 max-w-[200px] text-[11px] font-light rounded-tl-[8px] rounded-tr-[8px] rounded-br-[8px] rounded-bl-[0px] mb-2 '> Lorem ipsum dolor sit amet..</p>
 
@@ -138,7 +160,7 @@ const ChatBox = () => {
             <img src={assets.profile_img} alt="user-img" className='w-[27px] aspect-square rounded-[50px]  ' />
             <p>2:30 PM</p>
           </div>
-        </div>
+        </div> */}
 
       </div>
 
@@ -156,7 +178,7 @@ const ChatBox = () => {
 
       </div>
 
-    </div>
+    </div >
   )
     : <div className='w-full flex flex-col items-center justify-center gap-[5px]  ' >
       <img src={assets.logo_icon} width={60} alt="logo" />
