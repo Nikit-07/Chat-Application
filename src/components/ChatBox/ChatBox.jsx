@@ -57,13 +57,36 @@ const ChatBox = () => {
     }
     // it clears the input field after sending the message
     setInput("");
+  }
 
+
+  // Convert the timestamp of firebase to 12 hour time format.
+  // imp- toDate() method here is not an in-built method of javascript but a firebase timestamp specific method for converting time.
+
+  const convertTimestamp = (timestamp)=> {
+
+    console.log(timestamp);
+
+    const date= timestamp.toDate();
+
+    console.log(date);
+    const hour= date.getHours();
+    const minute= date.getMinutes();
+
+    if(hour > 12){
+      console.log(hour-12 + ":" + minute + "PM");
+      return hour-12 + ":" + minute + "PM";
+    }
+    else{
+      console.log(hour + ":" + minute + "AM");
+      return hour + ":" + minute + "AM";
+    }
 
   }
 
 
-
   useEffect(() => {
+    
 
     if (messagesId) {
       const unSub = onSnapshot(doc(db, "messages", messagesId), (res) => {
@@ -112,12 +135,12 @@ const ChatBox = () => {
 
             <div className='text-center text-[9px] ' >
               <img src={msg.sId === userData.id ? userData.avatar : chatUser.userData.avatar} alt="user-img" className='w-[27px] aspect-square rounded-[50px]  ' />
-              <p>2:30 PM</p>
+              <p>{ convertTimestamp(msg.createdAt)}</p>
             </div>
           </div>
         ) )}
 
-        
+
 
         {/* senders-messaage */}
 
