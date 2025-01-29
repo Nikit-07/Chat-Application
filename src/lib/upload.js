@@ -13,14 +13,15 @@ const upload = async (file) => {
       file
     );
 
-    console.log("File Uploaded Successfully: ", response);
+    // console.log("File Uploaded Successfully: ", response);
 
     const fileURL = storageBucket.getFileView(
       "676911070024a34c038f",
       response.$id
     );
 
-    console.log(fileURL);
+    // the url of the file
+    // console.log(fileURL);
 
     return fileURL;
   } catch (error) {

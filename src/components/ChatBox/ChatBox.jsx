@@ -4,6 +4,7 @@ import { AppContext } from '../../context/AppContext'
 import { arrayUnion, doc, getDoc, onSnapshot, updateDoc } from 'firebase/firestore';
 import { db } from '../../config/firebase';
 import { toast } from 'react-toastify';
+import upload from '../../lib/upload';
 
 const ChatBox = () => {
   const { userData, chatUser, messagesId, messages, setMessages } = useContext(AppContext);
@@ -35,7 +36,7 @@ const ChatBox = () => {
             const userChatData = userChatsSnapshot.data();
             const chatIndex = userChatData.chatData.findIndex((index) => index.messageId === messagesId);
 
-            userChatData.chatData[chatIndex].lastMessage = input;
+            userChatData.chatData[chatIndex].lastMessage = input.slice(0, 30);
             userChatData.chatData[chatIndex].updatedAt = Date.now();
 
             if (userChatData.chatData[chatIndex].rId === userData.id) {
@@ -59,26 +60,76 @@ const ChatBox = () => {
     setInput("");
   }
 
+  const sendImage = async (e) => {
+
+    try {
+      
+      const fileUrl =await upload(e.target.files[0]);
+      console.log("This is the file url", fileUrl);
+
+      if (fileUrl && messagesId) {
+        await updateDoc(doc(db, "messages", messagesId), {
+          messages: arrayUnion({
+            sId: userData.id,
+            image: fileUrl,
+            createdAt: new Date()
+          })
+        })
+      }
+
+
+      const userIDs = [userData.id, chatUser.rId];
+
+      userIDs.forEach(async (id) => {
+        const userChatsRef = doc(db, 'chats', id);
+        const userChatsSnapshot = await getDoc(userChatsRef);
+
+        if (userChatsSnapshot.exists()) {
+          const userChatData = userChatsSnapshot.data();
+          const chatIndex = userChatData.chatData.findIndex((index) => index.messageId === messagesId);
+
+          userChatData.chatData[chatIndex].lastMessage = "Image";
+          userChatData.chatData[chatIndex].updatedAt = Date.now();
+
+          if (userChatData.chatData[chatIndex].rId === userData.id) {
+            userChatData.chatData[chatIndex].messageSeen = false;
+          }
+
+          await updateDoc(userChatsRef, {
+            chatData: userChatData.chatData,
+          });
+
+        }
+
+      })
+
+    } catch (error) {
+      toast.error(error.message);
+      console.log(error);
+
+    }
+  }
+
 
   // Convert the timestamp of firebase to 12 hour time format.
   // imp- toDate() method here is not an in-built method of javascript but a firebase timestamp specific method for converting time.
 
-  const convertTimestamp = (timestamp)=> {
+  const convertTimestamp = (timestamp) => {
 
-    console.log(timestamp);
+    // console.log(timestamp);
 
-    const date= timestamp.toDate();
+    const date = timestamp.toDate();
 
-    console.log(date);
-    const hour= date.getHours();
-    const minute= date.getMinutes();
+    // console.log(date);
+    const hour = date.getHours();
+    const minute = date.getMinutes();
 
-    if(hour > 12){
-      console.log(hour-12 + ":" + minute + "PM");
-      return hour-12 + ":" + minute + "PM";
+    if (hour > 12) {
+      // console.log(hour-12 + ":" + minute + "PM");
+      return hour - 12 + ":" + minute + "PM";
     }
-    else{
-      console.log(hour + ":" + minute + "AM");
+    else {
+      // console.log(hour + ":" + minute + "AM");
       return hour + ":" + minute + "AM";
     }
 
@@ -86,7 +137,7 @@ const ChatBox = () => {
 
 
   useEffect(() => {
-    
+
 
     if (messagesId) {
       const unSub = onSnapshot(doc(db, "messages", messagesId), (res) => {
@@ -126,7 +177,7 @@ const ChatBox = () => {
       <div className=' h-[calc(100%-70px)] pb-[50px] flex flex-col-reverse  overflow-y-scroll'>
 
         {messages.map((msg, index) => (
-        // each-messaage 
+          // each-messaage 
 
           <div key={index} className={msg.sId === userData.id ? 'flex items-end justify-end gap-[5px] py-0 px-[15px]' : 'flex flex-row-reverse items-end justify-end  gap-[5px] py-0 px-[15px]'} >
 
@@ -135,10 +186,10 @@ const ChatBox = () => {
 
             <div className='text-center text-[9px] ' >
               <img src={msg.sId === userData.id ? userData.avatar : chatUser.userData.avatar} alt="user-img" className='w-[27px] aspect-square rounded-[50px]  ' />
-              <p>{ convertTimestamp(msg.createdAt)}</p>
+              <p>{convertTimestamp(msg.createdAt)}</p>
             </div>
           </div>
-        ) )}
+        ))}
 
 
 
@@ -192,7 +243,7 @@ const ChatBox = () => {
       <div className='flex items-center gap-3 py-[10px] px-[15px] bg-white absolute bottom-0 right-0 left-0' >
 
         <input onChange={(e) => setInput(e.target.value)} value={input} type="text" placeholder='Send a message...' className='flex-1 border-none outline-none ' />
-        <input type="file" id='image' accept='image/png, image/jpeg ' hidden />
+        <input onChange={sendImage} type="file" id='image' accept='image/png, image/jpeg ' hidden />
 
         <label htmlFor="image" className='flex ' >
           <img className='w-[22px] cursor-pointer ' src={assets.gallery_icon} alt="gallery-icon" />
