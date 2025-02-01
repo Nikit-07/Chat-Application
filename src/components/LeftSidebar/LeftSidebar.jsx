@@ -98,16 +98,39 @@ const LeftSidebar = () => {
 
     }
 
-    const setChat = async (item)=> {
-        // saving the selected user data and messagesId from the search-bar  In the state
-        // console.log(item);
-        
+    const setChat = async (item) => {
 
-        setMessagesId(item.messageId);
-        setChatUser(item);
+        try {
 
-        // console.log(chatUser);
-        // console.log(messagesId);
+            // saving the selected user data and messagesId from the search-bar  In the state
+            // console.log(item);
+
+
+            setMessagesId(item.messageId);
+            setChatUser(item);
+            // console.log(chatUser);
+            // console.log(messagesId);
+
+            const userChatsRef = doc(db, "chats", userData.id);
+            const userChatsSnapshot = await getDoc(userChatsRef);
+            const userChatsData = userChatsSnapshot.data();
+            // console.log(userChatsData);
+            const chatIndex = userChatsData.chatData.findIndex((c) => c.messageId === item.messageId);
+            // console.log(chatIndex);
+            
+            userChatsData.chatData[chatIndex].messageSeen = true;
+            // console.log(userChatsData.chatData[chatIndex]);
+
+            await updateDoc(userChatsRef, {
+                chatData: userChatsData.chatData,
+            });
+
+        } catch (error) {
+            toast.error(error.message);
+            console.error(error);
+
+        }
+
     }
 
 
@@ -159,17 +182,17 @@ const LeftSidebar = () => {
 
                     </div> :
 
-                        chatData.map((item, index) => (
-                            <div onClick={ ()=> setChat(item)} className='flex items-center gap-[10px] py-[10px] px-[20px] cursor-pointer text-[13px] hover:bg-[#077EFF] group' key={index}>
+                    chatData.map((item, index) => (
+                        <div onClick={() => setChat(item)} className='flex items-center gap-[10px] py-[10px] px-[20px] cursor-pointer text-[13px] hover:bg-[#077EFF] group' key={index}  >
 
-                                <img src={item.userData.avatar} alt="profile-img" className='w-[35px] rounded-[50%] aspect-square ' />
+                            <img src={item.userData.avatar} alt="profile-img" className={`w-[35px] rounded-[50%] aspect-square ${item.messageSeen || item.messageId === messagesId ? ' ' : 'border-[3px] border-[#07fff3]'} `} />
 
-                                <div className='flex flex-col'>
-                                    <p>{item.userData.name}</p>
-                                    <span className='text-[#9f9f9f] text-[11px] group-hover:text-white '>{item.lastMessage}</span>
-                                </div>
+                            <div className="flex flex-col">
+                                <p>{item.userData.name}</p>
+                                <span className={`text-[#9f9f9f] text-[11px] group-hover:text-white ${item.messageSeen || item.messageId === messagesId ? ' ' : 'text-[#07fff3]'} `} >{item.lastMessage}</span>
                             </div>
-                        )) 
+                        </div>
+                    ))
 
 
                 }

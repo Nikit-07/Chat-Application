@@ -63,7 +63,7 @@ const ChatBox = () => {
   const sendImage = async (e) => {
 
     try {
-      
+
       const fileUrl =await upload(e.target.files[0]);
       console.log("This is the file url", fileUrl);
 
@@ -181,8 +181,9 @@ const ChatBox = () => {
 
           <div key={index} className={msg.sId === userData.id ? 'flex items-end justify-end gap-[5px] py-0 px-[15px]' : 'flex flex-row-reverse items-end justify-end  gap-[5px] py-0 px-[15px]'} >
 
-            <p className='text-white bg-[#077EFF] p-2 max-w-[200px] text-[11px] font-light rounded-tl-[8px] rounded-tr-[8px] rounded-br-[0px] rounded-bl-[8px] mb-2 '> {msg.text} </p>
-
+            {msg.image ? 
+            <img src={msg.image} alt="img" className='max-w-[230px] mb-[30px] rounded-[10px] ' />
+            : <p className='text-white bg-[#077EFF] p-2 max-w-[200px] text-[11px] font-light rounded-tl-[8px] rounded-tr-[8px] rounded-br-[0px] rounded-bl-[8px] mb-2 '> {msg.text} </p> }
 
             <div className='text-center text-[9px] ' >
               <img src={msg.sId === userData.id ? userData.avatar : chatUser.userData.avatar} alt="user-img" className='w-[27px] aspect-square rounded-[50px]  ' />
