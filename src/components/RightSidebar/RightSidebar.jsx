@@ -30,7 +30,8 @@ const RightSidebar = () => {
 
         <img src={chatUser.userData.avatar} alt="user-profile" className='w-[110px] aspect-square rounded-[50%] ' />
 
-        <h3 className='flex items-center justify-center gap-[5px] text-[18px] font-normal my-[5px] mx-0' >{chatUser.userData.name} <img src={assets.green_dot} alt="green-dot" /></h3>
+        <h3 className='flex items-center justify-center gap-[5px] text-[18px] font-normal my-[5px] mx-0' >{chatUser.userData.name} { Date.now()- chatUser.userData.lastSeen <= 70000 ?  <img src={assets.green_dot} alt="green-dot" className='!w-[15px]'/> : null } 
+        </h3>
         <p className='text-[10px] opacity-[80%] font-light ' >{chatUser.userData.bio}</p>
 
       </div>
@@ -45,7 +46,7 @@ const RightSidebar = () => {
           {
             msgImages.map((url, index) => (
 
-              <img onClick={()=> window.open(url)} key={index} src={url} alt="image" />
+              <img onClick={() => window.open(url)} key={index} src={url} alt="image" />
 
             ))
           }

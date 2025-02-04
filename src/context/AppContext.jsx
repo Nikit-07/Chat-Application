@@ -11,7 +11,7 @@ const AppContextProvider = ({ children }) => {
 
     const [userData, setUserData] = useState(null);
     const [chatData, setChatData] = useState(null);
-    
+
     const [messagesId, setMessagesId] = useState(null);
     const [messages, setMessages] = useState([]);
     const [chatUser, setChatUser] = useState(null);
@@ -35,7 +35,6 @@ const AppContextProvider = ({ children }) => {
             });
 
             setInterval(async () => {
-                // where is chatUser comming form find it
                 if(auth.chatUser){
                     await updateDoc(userRef, {
                         lastSeen: Date.now(),
