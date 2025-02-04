@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 import assets from '../../assets/assets'
-import { signup, login } from '../../config/firebase';
+import { signup, login, resetPass } from '../../config/firebase';
 
 
 const Login = () => {
@@ -52,6 +52,10 @@ const Login = () => {
             currentState === "Sign Up"
               ? <p className='text-[13px] text-[#5c5c5c] ' >Already have an account? <span className=' cursor-pointer text-[#077eff] font-medium ' onClick={() => setCurrentState("Login")} > Login here </span> </p>
               : <p className='text-[13px] text-[#5c5c5c] ' >Create an account <span className=' cursor-pointer text-[#077eff] font-medium ' onClick={() => setCurrentState("Sign Up")} > Click here </span> </p>
+          }
+
+          {
+            currentState === "Login" ? <p className='text-[13px] text-[#5c5c5c] ' > Forgot Password ? <span className=' cursor-pointer text-[#077eff] font-medium ' onClick={() => resetPass(email)} > reset here </span> </p> : null
           }
 
 
