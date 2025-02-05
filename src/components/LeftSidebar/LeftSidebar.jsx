@@ -9,7 +9,7 @@ import { toast } from 'react-toastify';
 const LeftSidebar = () => {
 
     const navigate = useNavigate();
-    const { userData, chatData, messagesId, setMessagesId, chatUser, setChatUser } = useContext(AppContext);
+    const { userData, chatData, messagesId, setMessagesId, chatUser, setChatUser, chatVisible, setChatVisible } = useContext(AppContext);
     // console.log("Thsi is user logged in data", userData);
     // console.log("Thsi is chat logged in data", chatData);
 
@@ -125,6 +125,8 @@ const LeftSidebar = () => {
                 chatData: userChatsData.chatData,
             });
 
+            setChatVisible(true);
+
         } catch (error) {
             toast.error(error.message);
             console.error(error);
@@ -136,7 +138,7 @@ const LeftSidebar = () => {
 
     return (
         // left sidebar
-        <div className='bg-[#001030] text-white h-[75vh] ' >
+        <div className= {`bg-[#001030] text-white h-[75vh]  max-[900px]:w-[1000%]  ${chatVisible ? "max-[900px]:hidden " : ""}  `} >
 
             {/* left sidebar top */}
             <div className='p-[20px]'>

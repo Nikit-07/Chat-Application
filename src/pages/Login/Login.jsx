@@ -5,19 +5,19 @@ import { signup, login, resetPass } from '../../config/firebase';
 
 const Login = () => {
   const [currentState, setCurrentState] = useState("Sign Up");
-  const [userName, setUserName]= useState("");
-  const [email, setEmail]=useState("");
-  const [password, setPassword]=useState("");
+  const [userName, setUserName] = useState("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
 
   // submit handler
-  const onSubmitHandler= (event)=> {
+  const onSubmitHandler = (event) => {
     event.preventDefault();
 
-    if(currentState === "Sign Up"){
+    if (currentState === "Sign Up") {
       signup(userName, email, password);
     }
 
-    else{
+    else {
       login(email, password);
     }
   }
@@ -25,19 +25,20 @@ const Login = () => {
 
 
   return (
+
     <div className="min-h-screen bg-[url('/background.png')] bg-no-repeat bg-cover
-                    flex items-center justify-evenly"  >
+                    flex flex-col justify-center gap-[30px]  items-center md:justify-evenly md:flex-row"  >
       <img src={assets.logo_big} alt="logo" className="w-[max(20vw,200px)]" />
 
       <form onSubmit={onSubmitHandler} className="bg-white flex flex-col gap-5 py-[20px] px-[30px] rounded-[10px]" >
 
         <h2 className=' font-medium text-2xl' >{currentState}</h2>
 
-        {currentState === "Sign Up" ? <input type="text" placeholder='username' onChange={(e)=>setUserName(e.target.value)} value={userName} required className='input-style' /> : null}
+        {currentState === "Sign Up" ? <input type="text" placeholder='username' onChange={(e) => setUserName(e.target.value)} value={userName} required className='input-style' /> : null}
 
-        <input type="email" onChange={(e)=> setEmail(e.target.value)} value={email} placeholder='Email address' required className='input-style' />
+        <input type="email" onChange={(e) => setEmail(e.target.value)} value={email} placeholder='Email address' required className='input-style' />
 
-        <input type="password" onChange={(e)=> setPassword(e.target.value)} value={password} placeholder='password' required className='input-style' />
+        <input type="password" onChange={(e) => setPassword(e.target.value)} value={password} placeholder='password' required className='input-style' />
 
         <button type="submit" className='p-[10px] bg-[#077EFF] text-white text-[16px] border-none rounded-[4px] cursor-pointer' > {currentState === "Sign Up" ? "Create Account" : "Login now"} </button>
 

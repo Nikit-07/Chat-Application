@@ -23,7 +23,7 @@ const RightSidebar = () => {
 
   return chatUser ? (
     // right-sidebar
-    <div className='text-white bg-[#001030] relative h-[75vh] overflow-y-scroll '>
+    <div className='text-white bg-[#001030] relative h-[75vh] overflow-y-scroll max-[900px]:hidden '>
 
       {/* rs user profile */}
       <div className='pt-[60px] flex flex-col items-center space-x-4 '>

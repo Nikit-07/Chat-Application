@@ -7,7 +7,7 @@ import { toast } from 'react-toastify';
 import upload from '../../lib/upload';
 
 const ChatBox = () => {
-  const { userData, chatUser, messagesId, messages, setMessages } = useContext(AppContext);
+  const { userData, chatUser, messagesId, messages, setMessages, chatVisible, setChatVisible } = useContext(AppContext);
   const [input, setInput] = useState("");
 
   // sending and saving user data in the firestore database
@@ -158,7 +158,7 @@ const ChatBox = () => {
 
   return chatUser ? (
     // chat-box
-    <div className='h-[75vh] relative bg-[#f1f5ff]' >
+    <div className= {`h-[75vh] relative bg-[#f1f5ff] max-[900px]:w-[100%] max-[900px]:justify-center ${chatVisible ? ""  : "max-[900px]:hidden" } `} >
 
       {/*top-section chat-user */}
       <div className='py-[10px] px-[15px] flex items-center gap-[10px] border-b border-b-[#c6c6c6] ' >
@@ -167,7 +167,8 @@ const ChatBox = () => {
 
         <p className="flex-1 font-medium text-[20px] text-[#393939] flex items-center gap-[5px] " >{chatUser.userData.name} { Date.now()- chatUser.userData.lastSeen <= 70000 ?  <img src={assets.green_dot} alt="green-dot" className='!w-[15px]'/> : null } </p> 
 
-        <img src={assets.help_icon} alt="help-icon" className='w-[25px] rounded-[50%]' /> 
+        <img src={assets.help_icon} alt="help-icon" className='w-[25px] rounded-[50%] max-[900px]:hidden  ' /> 
+        <img onClick={ ()=> setChatVisible(false) } src={assets.arrow_icon} alt="arrow-icon" className='block md:hidden ' />
 
       </div>
 
@@ -255,7 +256,7 @@ const ChatBox = () => {
 
     </div >
   )
-    : <div className='w-full flex flex-col items-center justify-center gap-[5px]  ' >
+    : <div className={` w-full flex flex-col items-center justify-center gap-[5px] ${chatVisible ? ""  : " max-[900px]:hidden" } `} >
       <img src={assets.logo_icon} width={60} alt="logo" />
       <p className='font-medium text-xl text-[#383838] ' >Chat anytime, anywhere</p>
     </div>
