@@ -1,4 +1,4 @@
-import React, { useContext, useState } from 'react'
+import React, { useContext, useEffect, useState } from 'react'
 import assets from '../../assets/assets'
 import { useNavigate } from 'react-router-dom'
 import { arrayUnion, collection, doc, getDoc, getDocs, query, serverTimestamp, setDoc, updateDoc, where } from 'firebase/firestore';
@@ -27,7 +27,7 @@ const LeftSidebar = () => {
                 const querySnap = await getDocs(q);
 
                 if (!querySnap.empty && querySnap.docs[0].data().id !== userData.id) {
-                    console.log("First Doc Data:", querySnap.docs[0].data()); // Actual data of the first doc
+                    // console.log("First Doc Data:", querySnap.docs[0].data()); // Actual data of the first doc
 
 
                     let userAlreadyExist = false;   //set the already exist user to false
@@ -90,6 +90,19 @@ const LeftSidebar = () => {
                 })
             });
 
+            const uSnap= await getDoc(doc(db,"users", user.id));
+            const uData= uSnap.data();
+            setChat({
+                messageId: newMessageRef.id,
+                lastMessage:"",
+                rId:user.id,
+                updatedAt:Date.now(),
+                messageSeen: true,
+                userData: uData,
+            });
+            setShowSearch(false);
+            setChatVisible(true);
+
         } catch (error) {
             toast.error(error.message);
             console.error(error);
@@ -134,6 +147,22 @@ const LeftSidebar = () => {
         }
 
     }
+
+    useEffect(() => {
+      const updateChatUserData = async ()=>{
+        if(chatUser){
+            const userRef= doc(db, "users", chatUser.userData.id);
+            const userSnap= await getDoc(userRef);
+            const userData= userSnap.data();
+            setChatUser( prev=> ({...prev, userData: userData}));
+        }
+
+      }
+      updateChatUserData();
+    
+     
+    }, [chatData])
+    
 
 
     return (
